@@ -20,6 +20,11 @@ async function run() {
         await client.connect();
         const productCollection = client.db('industries').collection('products');
 
+        app.get('/products', async (req, res) => {
+            const result = await productCollection.find().toArray();
+            res.send(result)
+        })
+
         app.post('/products', async (req, res) => {
             const result = await productCollection.insertOne(req.body)
             res.send(result)
