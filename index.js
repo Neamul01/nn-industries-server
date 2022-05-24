@@ -19,15 +19,33 @@ async function run() {
     try {
         await client.connect();
         const productCollection = client.db('industries').collection('products');
+        const reviewCollection = client.db('industries').collection('reviews');
 
         app.get('/products', async (req, res) => {
             const result = await productCollection.find().toArray();
             res.send(result)
         })
 
+        app.get('/products/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await productCollection.findOne(query);
+            res.send(result)
+        })
+
         app.post('/products', async (req, res) => {
             const result = await productCollection.insertOne(req.body)
             res.send(result)
+        })
+
+        app.post('/reviews', async (req, res) => {
+            const result = await reviewCollection.insertOne(req.body);
+            res.send(result)
+        })
+
+        app.get('/reviews', async (req, res) => {
+            const result = await reviewCollection.find().toArray();
+            res.send(result);
         })
     }
     finally {
