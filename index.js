@@ -20,7 +20,9 @@ async function run() {
         await client.connect();
         const productCollection = client.db('industries').collection('products');
         const reviewCollection = client.db('industries').collection('reviews');
+        const orderCollection = client.db('industries').collection('orders');
 
+        //products api's here
         app.get('/products', async (req, res) => {
             const result = await productCollection.find().toArray();
             res.send(result)
@@ -38,6 +40,7 @@ async function run() {
             res.send(result)
         })
 
+        //reviews api's here
         app.get('/reviews', async (req, res) => {
             const result = await reviewCollection.find().toArray();
             res.send(result);
@@ -45,6 +48,12 @@ async function run() {
 
         app.post('/reviews', async (req, res) => {
             const result = await reviewCollection.insertOne(req.body);
+            res.send(result)
+        })
+
+        //orders api's here
+        app.post('orders', async (req, res) => {
+            const result = orderCollection.insertOne(req.body);
             res.send(result)
         })
     }
