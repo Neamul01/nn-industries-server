@@ -52,15 +52,23 @@ async function run() {
         })
 
         //orders api's here
+        app.get('/orders', async (req, res) => {
+            const result = await orderCollection.find().toArray();
+            res.send(result)
+        })
+
         app.post('/orders', async (req, res) => {
             const result = await orderCollection.insertOne(req.body);
             res.send(result)
         })
 
-        app.get('/orders', async (req, res) => {
-            const result = await orderCollection.find().toArray();
+        app.delete('/orders/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await orderCollection.deleteOne(query);
             res.send(result)
         })
+
     }
     finally {
 
