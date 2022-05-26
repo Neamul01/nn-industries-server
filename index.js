@@ -156,6 +156,18 @@ async function run() {
             res.send(updatedDoc)
         })
 
+        app.patch('/orders/status/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const updatedDoc = {
+                $set: {
+                    status: true,
+                }
+            }
+            const result = await orderCollection.updateOne(filter, updatedDoc);
+            res.send(result)
+        })
+
     }
     finally {
 
