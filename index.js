@@ -22,6 +22,7 @@ async function run() {
         const productCollection = client.db('industries').collection('products');
         const reviewCollection = client.db('industries').collection('reviews');
         const orderCollection = client.db('industries').collection('orders');
+        const paymentCollection = client.db('industries').collection('payments');
 
 
         app.post('/create-payment-intent', async (req, res) => {
@@ -88,6 +89,21 @@ async function run() {
             const query = { _id: ObjectId(id) };
             const result = await orderCollection.deleteOne(query);
             res.send(result)
+        })
+
+        app.patch('/orders/:id', async (req, res) => {
+            const id = req.params.id;
+            const payment = req.body;
+            const filter = { _id: ObjectId(id) };
+            const updatedDoc = {
+                $set: {
+                    paid: true,
+                    transactionId: payment.transactionId
+                }
+            }
+            const result = await paymentCollection.insertOne(payment)
+            const updateOrder = await orderCollection.updateOne(filter, updatedDoc);
+            res.send(updatedDoc)
         })
 
     }
