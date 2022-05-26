@@ -91,6 +91,13 @@ async function run() {
             res.send(result)
         })
 
+        app.delete("/products/:id", verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await productCollection.deleteOne(query);
+            res.send(result)
+        })
+
         //reviews api's here
         app.get('/reviews', async (req, res) => {
             const result = await reviewCollection.find().toArray();
