@@ -1,10 +1,12 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
+const jwt = require('jsonwebtoken')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-const app = express();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
 const port = process.env.PORT || 5000;
+const app = express();
 
 app.use(cors())
 app.use(express.json());
@@ -23,6 +25,7 @@ async function run() {
         const reviewCollection = client.db('industries').collection('reviews');
         const orderCollection = client.db('industries').collection('orders');
         const paymentCollection = client.db('industries').collection('payments');
+        const userCollection = client.db('industries').collection('users');
 
 
         app.post('/create-payment-intent', async (req, res) => {
@@ -35,6 +38,20 @@ async function run() {
             });
             res.send({ clientSecret: paymentIntent.client_secret })
         });
+
+        //user api's here
+        app.put('/user/:email', async (req, res) => {
+            const email = req.params.email;
+            const user = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: user
+            }
+            const result = await userCollection.updateOne(filter, updatedDoc, options);
+            const token = jwt.sign({ email: email }, pricess.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d' });
+            res.send(restlt, token)
+        })
 
         //products api's here
         app.get('/products', async (req, res) => {
