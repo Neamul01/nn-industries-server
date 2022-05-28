@@ -149,6 +149,7 @@ async function run() {
         //orders api's here
         app.get('/orders/:email', verifyJWT, async (req, res) => {
             const email = req.params.email;
+            console.log(req.params)
             const decodedEmail = req.decoded.email;
             if (email === decodedEmail) {
                 const filter = { email: email };
