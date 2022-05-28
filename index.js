@@ -98,7 +98,7 @@ async function run() {
             res.send({ admin: isAdmin })
         })
 
-        app.put('/users/admin/:email', verifyJWT, async (req, res) => {
+        app.put('/users/admin/:email', verifyJWT, verifyAdmin, async (req, res) => {
             const email = req.params.email;
             const filter = { email: email };
             const updatedDoc = {
@@ -149,7 +149,6 @@ async function run() {
         //orders api's here
         app.get('/orders/:email', verifyJWT, async (req, res) => {
             const email = req.params.email;
-            console.log(req.params)
             const decodedEmail = req.decoded.email;
             if (email === decodedEmail) {
                 const filter = { email: email };
