@@ -8,7 +8,13 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const port = process.env.PORT || 5000;
 const app = express();
 
-app.use(cors())
+app.use(
+    cors({
+        origin: true,
+        optionsSuccessStatus: 200,
+        credentials: true,
+    })
+);
 app.use(express.json());
 
 app.get('/', (req, res) => {
@@ -41,6 +47,17 @@ async function run() {
         const orderCollection = client.db('industries').collection('orders');
         const paymentCollection = client.db('industries').collection('payments');
         const userCollection = client.db('industries').collection('users');
+
+        const verifyAdmin = async (req, res, next) => {
+            const requester = req.decoded.email;
+            const requesterAccount = await userCollection.findOne({ email: requester });
+            if (requesterAccount.role === 'admin') {
+                next()
+            }
+            else {
+                res.status(403).send({ message: 'Forbidden' })
+            }
+        }
 
 
         app.post('/create-payment-intent', async (req, res) => {
